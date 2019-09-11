@@ -10467,13 +10467,17 @@ inline void gcode_M226() {
 
 #endif // PIDTEMPBED
 
-#if defined(CHDK) || HAS_PHOTOGRAPH
+#if defined(CHDK) || HAS_PHOTOGRAPH || defined(ACTION_ON_SNAPSHOT)
 
   /**
    * M240: Trigger a camera by emulating a Canon RC-1
    *       See http://www.doc-diy.net/photo/rc-1_hacked/
    */
   inline void gcode_M240() {
+    #ifdef ACTION_ON_SNAPSHOT
+        SERIAL_ECHOLNPGM("//action:" ACTION_ON_SNAPSHOT);
+    #endif
+
     #ifdef CHDK
 
       OUT_WRITE(CHDK, HIGH);
@@ -10501,7 +10505,8 @@ inline void gcode_M226() {
     #endif // !CHDK && HAS_PHOTOGRAPH
   }
 
-#endif // CHDK || PHOTOGRAPH_PIN
+#endif // CHDK || HAS_PHOTOGRAPH || ACTION_ON_SNAPSHOT
+
 
 #if HAS_LCD_CONTRAST
 
@@ -13296,7 +13301,7 @@ void process_parsed_command() {
         case 226: gcode_M226(); break;                              // M226: Wait for Pin State
       #endif
 
-      #if defined(CHDK) || HAS_PHOTOGRAPH
+      #if defined(CHDK) || HAS_PHOTOGRAPH || defined(ACTION_ON_SNAPSHOT)
         case 240: gcode_M240(); break;                            // M240: Trigger Camera
       #endif
 
